@@ -132,7 +132,9 @@ export default {
             this.form.error = true;
           } else if (
             rule === "address" &&
-            !this.$robonomics.web3.isAddress(this.form.fields[field].value)
+            !this.$robonomics.web3.utils.isAddress(
+              this.form.fields[field].value
+            )
           ) {
             this.form.fields[field].error = true;
             this.form.error = true;

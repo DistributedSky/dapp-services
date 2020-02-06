@@ -95,8 +95,8 @@ export default {
               this.$robonomics.web3,
               this.services[i].token
             );
-            const name = await token.call.name();
-            const symbol = await token.call.symbol();
+            const name = await token.methods.name().call();
+            const symbol = await token.methods.symbol().call();
             this.services[i].token = {
               address: this.services[i].token,
               name: `${name} (${symbol})`

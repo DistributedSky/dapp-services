@@ -1,7 +1,7 @@
-import { web3Utils } from 'robonomics-js';
-import axios from 'axios';
-import getIpfs, { cat as ipfsCat } from './ipfs';
-import rosBag, { getRosbag } from './rosBag';
+import { web3Utils } from "robonomics-js";
+import axios from "axios";
+import getIpfs, { cat as ipfsCat } from "./ipfs";
+import rosBag, { getRosbag } from "./rosBag";
 
 export const toWei = (price, decimals) => {
   const priceNum = new web3.BigNumber(price);
@@ -53,7 +53,7 @@ export const watchTx = tx => {
   };
   if (Array.isArray(tx)) {
     return Promise.all(tx.map(oneTx => watchTx(oneTx)));
-  } else if (typeof tx === 'string') {
+  } else if (typeof tx === "string") {
     return new Promise(transactionReceiptAsync);
   }
   throw new Error(`Invalid Type: ${tx}`);
@@ -72,13 +72,13 @@ export const promisify = fn => {
 };
 
 export const intFormat = x => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
 export const floatFormat = x => {
-  var parts = x.toString().split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  return parts.join('.');
+  var parts = x.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return parts.join(".");
 };
 
 export const recovery = (data, signature) => {
@@ -86,7 +86,7 @@ export const recovery = (data, signature) => {
     ? web3Utils.utils.hexToBytes(data)
     : data;
   const messageBuffer = Buffer.from(message);
-  const preamble = '\x19Ethereum Signed Message:\n' + message.length;
+  const preamble = "\x19Ethereum Signed Message:\n" + message.length;
   const preambleBuffer = Buffer.from(preamble);
   const ethMessage = Buffer.concat([preambleBuffer, messageBuffer]);
   const hash = web3Utils.hash.keccak256s(ethMessage);

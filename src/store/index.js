@@ -1,8 +1,8 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import createLogger from 'vuex/dist/logger';
-import theme from './modules/theme';
-import sender from './modules/sender';
+import Vue from "vue";
+import Vuex from "vuex";
+import createLogger from "vuex/dist/logger";
+import theme from "./modules/theme";
+import sender from "./modules/sender";
 
 Vue.use(Vuex);
 

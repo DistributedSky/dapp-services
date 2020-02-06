@@ -1,4 +1,4 @@
-import getRobonomics from '../../utils/robonomics';
+import getRobonomics from "../../utils/robonomics";
 
 const STATUS = {
   EMPTY: 0,
@@ -33,24 +33,24 @@ const actions = {
     const demandModel = getters.demandById(id);
     const offerListener = robonomics.onOffer(demandModel.model, msg => {
       const demand = getters.demandById(id);
-      console.log('offer', msg);
+      console.log("offer", msg);
       if (
         msg.objective === demand.objective &&
         msg.token === demand.token &&
         msg.cost === demand.cost
       ) {
-        commit('status', { id, status: STATUS.OFFER });
-        commit('offer', { id, offer: msg });
+        commit("status", { id, status: STATUS.OFFER });
+        commit("offer", { id, offer: msg });
         robonomics.messenger.off(offerListener);
         clearInterval(demand.broadcast);
       }
     });
     const resultListener = robonomics.onResult(msg => {
       const demand = getters.demandById(id);
-      console.log('result unverified', msg);
+      console.log("result unverified", msg);
       if (demand.liability !== null && msg.liability === demand.liability) {
-        commit('status', { id, status: STATUS.REPORT });
-        commit('result', { id, result: msg });
+        commit("status", { id, status: STATUS.REPORT });
+        commit("result", { id, result: msg });
         robonomics.messenger.off(resultListener);
       }
     });
@@ -58,53 +58,53 @@ const actions = {
   send({ state, commit, dispatch, getters }, demand) {
     const robonomics = getRobonomics();
     const id = Object.keys(state.demands).length + 1;
-    commit('msg', { id, demand });
-    commit('status', { id, status: STATUS.BTN });
+    commit("msg", { id, demand });
+    commit("status", { id, status: STATUS.BTN });
 
     robonomics
       .sendDemand(demand, true, msg => {
-        dispatch('listen', id);
+        dispatch("listen", id);
         // console.log(msg.getHash());
         if (timeout > 0) {
-          commit('status', { id, status: STATUS.BROADCAST });
+          commit("status", { id, status: STATUS.BROADCAST });
           const interval = setInterval(() => {
             robonomics.messenger.channel.send(msg.encode());
           }, timeout);
-          commit('broadcast', { id, broadcast: interval });
+          commit("broadcast", { id, broadcast: interval });
         } else {
-          commit('status', { id, status: STATUS.SEND });
+          commit("status", { id, status: STATUS.SEND });
         }
       })
       .then(liability => {
-        console.log('liability demand', liability.address);
-        commit('liability', { id, liability: liability.address });
-        commit('status', { id, status: STATUS.CONTRACT });
+        console.log("liability demand", liability.address);
+        commit("liability", { id, liability: liability.address });
+        commit("status", { id, status: STATUS.CONTRACT });
         const interval = setInterval(() => {
           liability.contract.result((e, r) => {
             if (e) {
               clearInterval(interval);
               return;
             }
-            if (r && r !== '0x') {
+            if (r && r !== "0x") {
               clearInterval(interval);
-              console.log('result fallback');
+              console.log("result fallback");
               // console.log("r", hexToStr(r));
-              commit('status', { id, status: STATUS.RESULT });
+              commit("status", { id, status: STATUS.RESULT });
             }
           });
         }, 1000);
-        commit('fallback', { id, fallback: interval });
+        commit("fallback", { id, fallback: interval });
         return liability.onResult();
       })
       .then(result => {
         const demand = getters.demandById(id);
         clearInterval(demand.fallback);
-        console.log('result', result);
-        commit('status', { id, status: STATUS.RESULT });
+        console.log("result", result);
+        commit("status", { id, status: STATUS.RESULT });
       })
       .catch(e => {
         console.log(e);
-        commit('status', { id, status: STATUS.EMPTY });
+        commit("status", { id, status: STATUS.EMPTY });
       });
 
     return id;

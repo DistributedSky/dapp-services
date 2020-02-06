@@ -88,8 +88,9 @@ export default {
     }
   },
   created() {
-    this.$robonomics.factory.call
+    this.$robonomics.factory.methods
       .nonceOf(this.$robonomics.account.address)
+      .call()
       .then(r => {
         this.nonce = Number(r);
       });

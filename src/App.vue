@@ -37,6 +37,7 @@ import DepNetwork from "./components/common/web3/DepNetwork";
 import NotAccounts from "./components/common/web3/NotAccounts";
 import { initRobonomics } from "./utils/robonomics";
 import getIpfs from "./utils/ipfs";
+import config from "./config";
 
 export default {
   name: "app",
@@ -50,7 +51,12 @@ export default {
     this.$store.dispatch("theme/init");
     Web3Check.store.on("load", state => {
       getIpfs().then(ipfs => {
-        Vue.prototype.$robonomics = initRobonomics(ipfs, state.networkId);
+        config.chain.set(state.networkId);
+        Vue.prototype.$robonomics = initRobonomics(
+          state.web3,
+          ipfs,
+          state.account
+        );
         this.$robonomics.ready().then(() => {
           this.isReadyRobonomics = true;
         });
